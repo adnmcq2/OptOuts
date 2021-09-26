@@ -95,11 +95,21 @@ links_to_shitbox_companies = [a for a in links if 'vtsos' in a.attrs.get('href',
 
 shitbox_companies = [(b.attrs.get('href', '').split('=')[1], b.text) for b in links_to_shitbox_companies]
 
+path = '/downloads'
+
+# Check whether the specified path exists or not
+isExist = os.path.exists(path)
+
+if not isExist:
+  # Create a new directory because it does not exist
+  os.makedirs(path)
+  print("The new directory is created!")
+
 
 with open('opt_out.csv', 'w', newline='') as csvfile:
   spamwriter = csv.writer(csvfile, delimiter=',')#,quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
-  for business_id, business_name in shitbox_companies[5:]:
+  for business_id, business_name in shitbox_companies:
     #download the pdf
     # url = 'https://bizfilings.vermont.gov/online/BusinessInquire/BusinessInformation?businessID=%s'%business_id
     download_pdf(business_id, business_name)
