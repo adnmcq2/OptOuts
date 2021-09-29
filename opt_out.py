@@ -16,12 +16,14 @@ import PyPDF2
 
 file_path = abspath(getsourcefile(lambda _: None))
 file_dir = os.path.normpath(file_path + os.sep + os.pardir)
+downloads_dir = os.path.join(file_dir, "downloads")
+
 
 chromedriver = os.path.join(file_dir, "chromedriver.exe")
 os.chmod(chromedriver, int('0755'))
 os.environ["webdriver.chrome.driver"] = chromedriver
 op = webdriver.ChromeOptions()
-p = {"download.default_directory": "C:\\Users\\aiden\\Desktop\\python\\data_privacy\\downloads",
+p = {"download.default_directory": downloads_dir,
      "safebrowsing.enabled": "false"}
 op.add_experimental_option("prefs", p)
 # driver = webdriver.Chrome(chrome_options=op)
@@ -42,7 +44,7 @@ def download_pdf(business_id, business_name):
   time.sleep(8)
   driver.close()
 
-  for root, subs, files in os.walk("downloads"):
+  for root, subs, files in os.walk(downloads_dir):
     for file in files:
       if file.startswith('000'):
         os.rename(os.path.join(root, file), os.path.join(root, business_name+'.pdf'))
@@ -95,7 +97,7 @@ links_to_shitbox_companies = [a for a in links if 'vtsos' in a.attrs.get('href',
 
 shitbox_companies = [(b.attrs.get('href', '').split('=')[1], b.text) for b in links_to_shitbox_companies]
 
-path = '/downloads'
+path = downloads_dir
 
 # Check whether the specified path exists or not
 isExist = os.path.exists(path)
