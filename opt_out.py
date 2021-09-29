@@ -47,7 +47,12 @@ def download_pdf(business_id, business_name):
   for root, subs, files in os.walk(downloads_dir):
     for file in files:
       if file.startswith('000'):
-        os.rename(os.path.join(root, file), os.path.join(root, business_name+'.pdf'))
+        try:
+          os.rename(os.path.join(root, file), os.path.join(root, business_name+'.pdf'))
+        except FileNotFoundError as e:
+          time.sleep(8)
+          os.rename(os.path.join(root, file), os.path.join(root, business_name + '.pdf'))
+
   time.sleep(1)
   return 1
 '''
