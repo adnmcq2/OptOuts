@@ -41,7 +41,7 @@ def download_pdf(business_id, business_name):
   # driver.find_element(By.XPATH, 'DATA BROKER REGISTRATION')
   driver.find_element_by_xpath("//*[text()='DATA BROKER REGISTRATION']").click()
 
-  time.sleep(8)
+  time.sleep(15)
   driver.close()
 
   for root, subs, files in os.walk(downloads_dir):
@@ -49,9 +49,11 @@ def download_pdf(business_id, business_name):
       if file.startswith('000'):
         try:
           os.rename(os.path.join(root, file), os.path.join(root, business_name+'.pdf'))
-        except FileNotFoundError as e:
-          time.sleep(8)
-          os.rename(os.path.join(root, file), os.path.join(root, business_name + '.pdf'))
+        except (FileNotFoundError, FileExistsError) as e:
+          # time.sleep(8)
+          # os.rename(os.path.join(root, file), os.path.join(root, business_name + '.pdf'))
+          continue
+
 
   time.sleep(1)
   return 1
@@ -116,13 +118,22 @@ if not isExist:
 with open('opt_out.csv', 'w', newline='') as csvfile:
   spamwriter = csv.writer(csvfile, delimiter=',')#,quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
+
+already_done = []
+for root, subs, files in os.walk(downloads_dir):
+  for file in files:
+    bname = file.split('.pdf')[0]
+    already_done.append(bname)
+
+
   for business_id, business_name in shitbox_companies:
     #download the pdf
     # url = 'https://bizfilings.vermont.gov/online/BusinessInquire/BusinessInformation?businessID=%s'%business_id
-    download_pdf(business_id, business_name)
+    if business_name not in already_done:
+      download_pdf(business_id, business_name)
 
-    #get the opt-out info by reading the pdf
-    # out_instructions =  scrape_pdf()
+      #get the opt-out info by reading the pdf
+      # out_instructions =  scrape_pdf()
 
-    # spamwriter.writerow([business_id, business_name, 'Wonderful Spam'])
+      # spamwriter.writerow([business_id, business_name, 'Wonderful Spam'])
 
